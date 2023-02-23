@@ -8,8 +8,7 @@ const Perfil = () => {
     const { username } = useParams(); 
     let user = null;
     let isValidFields = true;
-    let gastosTotal = 0;
-    let saldo = 0;
+    let index
 
     // PEGAR OS DADOS DO USUÁRIO
     const readUsers = () => JSON.parse(localStorage.getItem('users')) ?? []
@@ -25,6 +24,7 @@ const Perfil = () => {
                 username: users[i].username,
                 id: i
             }
+            index = i
             break
         }
     }
@@ -34,28 +34,13 @@ const Perfil = () => {
     const [valor, setValor] = useState();
     const [categoria, setCategoria] = useState();
 
-    const readGastos = () => JSON.parse(localStorage.getItem('gastos')) ?? []
-    const gastos = readGastos();
-    
-    
-
     const createGastos = (gasto) => {
         const gastos = JSON.parse(localStorage.getItem('gastos')) ?? []
         gastos.push(gasto)
         localStorage.setItem('gastos', JSON.stringify(gastos));
     }
 
-    const updateGastos = () => {
-        gastos.forEach((gasto) => {
-            gastosTotal += gasto.valor;
-    })
-    }
-
-    const updateSaldo = () => saldo = (user.salario - gastosTotal);
-
     const saveGastos = () => {
-        
-        
         if(isValidFields){
             const gasto = {
                 titulo: titulo,
@@ -63,11 +48,29 @@ const Perfil = () => {
                 categoria: categoria,
                 user_id: user.id
             }
+
             createGastos(gasto);  
             updateGastos(gasto);  
             updateSaldo();
         }
     }
+
+    let gastosTotal = 0;
+    let saldo = 0;
+
+    const readGastos = () => JSON.parse(localStorage.getItem('gastos')) ?? []
+    let gastos = readGastos();
+
+    gastos = gastos.filter(gastos => gastos.user_id == index);
+
+    const updateGastos = () => {
+        gastos.forEach((gasto) => {
+            gastosTotal += gasto.valor;
+        });
+    }
+
+    const updateSaldo = () => saldo = (user.salario - gastosTotal);
+
 
     updateGastos();
     updateSaldo();
