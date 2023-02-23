@@ -6,8 +6,10 @@ import { useState } from "react";
 const Perfil = () => {
 
     const { username } = useParams(); 
-    let user = null
+    let user = null;
     let isValidFields = true;
+    let gastosTotal = 0;
+    let saldo = 0;
 
     // PEGAR OS DADOS DO USUÁRIO
     const readUsers = () => JSON.parse(localStorage.getItem('users')) ?? []
@@ -32,42 +34,62 @@ const Perfil = () => {
     const [valor, setValor] = useState();
     const [categoria, setCategoria] = useState();
 
+    const readGastos = () => JSON.parse(localStorage.getItem('gastos')) ?? []
+    const gastos = readGastos();
+    
+    
+
     const createGastos = (gasto) => {
         const gastos = JSON.parse(localStorage.getItem('gastos')) ?? []
         gastos.push(gasto)
         localStorage.setItem('gastos', JSON.stringify(gastos));
     }
 
-    const saveGastos = (e) => {
-        e.preventDefault();
+    const updateGastos = () => {
+        gastos.forEach((gasto) => {
+            gastosTotal += gasto.valor;
+    })
+    }
+
+    const updateSaldo = () => saldo = (user.salario - gastosTotal);
+
+    const saveGastos = () => {
+        
         
         if(isValidFields){
             const gasto = {
                 titulo: titulo,
-                valor: valor,
+                valor: Number(valor),
                 categoria: categoria,
                 user_id: user.id
             }
-            
-            
-        createGastos(gasto);        
+            createGastos(gasto);  
+            updateGastos(gasto);  
+            updateSaldo();
         }
     }
 
-    
-    
+    updateGastos();
+    updateSaldo();
 
     return (
         <>
             <h1>Olá {user.nome}</h1>
            <p>Sua renda mensal: {user.salario}</p>
-           <p>Sua despesa mensal: </p>
-           <p>Seu saldo: </p>
+           <p>Sua despesa mensal: {gastosTotal}</p>
+           <p>Seu saldo: {saldo}</p>
            <br />
            <hr />
            <br />
+            <h3>Suas depesas por categoria</h3>
+            <div>
+                  
+            </div>
+            <br />
+            <hr />
+           <br />
            <h3>Formulário adicionar despesas</h3>
-           <form onSubmit={(e) => saveGastos(e)}>
+           <form onSubmit={(e) => saveGastos()}>
             <div>
                 <label htmlFor="titulo">Título</label>
                 <input onChange={(e) => setTitulo(e.target.value)} type="text" id="titulo" />
@@ -79,6 +101,7 @@ const Perfil = () => {
             <div>
                 <label htmlFor="categoria">Categoria</label>
                 <select onChange={(e) => setCategoria(e.target.value)} id="categoria">
+                    <option>--</option>
                     <option value="casa">Casa</option>
                     <option value="alimentacao">Alimentação</option>
                     <option value="transporte">Transporte</option>
@@ -91,6 +114,26 @@ const Perfil = () => {
             </div>
             <button type="submit">Adicionar</button>
            </form>
+           <br />
+           <hr />
+           <br />
+            <h3>Extrato</h3>
+                <div>
+                    {gastos.length === 0 ? (
+                        <p>Nada aqui</p>
+                    ) : (
+                    
+                        gastos.map((gasto) => (
+                            <div>
+                                <p>Título: {gasto.titulo} - Valor: {gasto.valor} - Categoria: {gasto.categoria}</p>
+                            <br />
+                            </div>
+                        ))
+                    )} 
+                </div>
+            <br />
+            <hr />
+           <br />
            <a href="/">Sair</a>
         </>
     )
