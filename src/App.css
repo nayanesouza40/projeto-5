@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  padding: 0;
+  height: inherit;
+  box-sizing: border-box;
+}
+
+:root {
+  --roxo: #A18AFF;
+  --lilas: #CA8BFE;
+  --cinza-escuro: #717082;
+  --cinza-claro: #D9D9D9;
+  --branco: #F9F8FD;
+  --amarelo: #FAC608;
+  --rosa: #FD99AF;
+  --azul: #3FD4F4;
+}
+
+body {
+  background-color: var(--branco);
+  color: var(--cinza-escuro);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+[class*="col-"] {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.col-1 {
+  padding: 1rem;
+}
